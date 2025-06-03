@@ -40,8 +40,6 @@
         * Tổng số tiền của đơn hàng phải luôn bằng tổng số tiền của tất cả các `OrderItem`.
         * Trạng thái của đơn hàng phải tuân theo một chu trình cụ thể và không thể chuyển trạng thái lùi (ví dụ: `Pending` -> `Confirmed` -> `Shipped` -> `Delivered`).
 
----
-
 ## 3. Payment Subdomain / Payment Application
 
 * **Loại Subdomain:** `Generic`
@@ -88,8 +86,6 @@
         * `Current Stock` (tồn kho hiện tại) không bao giờ được âm.
         * `Reserved Stock` (tồn kho đã đặt trước) không thể lớn hơn `Current Stock`.
 
----
-
 ## 6. Authorization, Authentication Subdomain / Access Control Application
 
 * **Loại Subdomain:** `Generic`
@@ -106,8 +102,6 @@
     * **Invariants:**
         * Tên đăng nhập hoặc Email phải là duy nhất trong hệ thống.
         * Mật khẩu phải đáp ứng các yêu cầu về độ phức tạp.
-
----
 
 ## 7. Customer Management Subdomain / Customer Management Application
 
