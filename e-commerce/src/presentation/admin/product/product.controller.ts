@@ -1,3 +1,4 @@
+import { Public } from '@core/decorators/public.decorator';
 import {
   Controller,
   Get,
@@ -48,4 +49,11 @@ export class ProductController {
   // async getUserById(@Param('id') id: string) {
   //   return this.queryBus.execute(new GetUserQuery(id));
   // }
+
+  @Public()
+  @Get()
+  findAll(
+  ) {
+    return "find product all"
+  }
 }

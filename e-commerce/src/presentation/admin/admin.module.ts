@@ -22,7 +22,7 @@ export const routersConfig = {
         .setTitle('Admin API')
         .setDescription('The API description')
         .setVersion('1.0')
-        .addTag('Orders', '')
+        .addTag('Products', '')
         .addBearerAuth(
             { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
             'JWT-auth',

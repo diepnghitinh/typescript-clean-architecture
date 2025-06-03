@@ -7,6 +7,7 @@ import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { presentationRoutes } from '@presentation/routers.swagger';
 import { SwaggerModule } from '@nestjs/swagger';
+import { filterEndpointByVersion } from '@core/swagger/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
   const logger = await app.resolve(LoggerService);
 
   logger.setContext('Application');
+
+  app.setGlobalPrefix('v1');
 
    // Security middleware
    app.use(
@@ -65,6 +68,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, router.swagger());
     const swaggerPath = `swagger/${router.swaggerPath}`;
     Logger.log(`swagger is running on ${swaggerPath}`, 'Main');
+    document.paths = filterEndpointByVersion(document, router.swaggerPath, ['health']);
     SwaggerModule.setup(swaggerPath, app, document);
   });
 
