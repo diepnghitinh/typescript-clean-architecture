@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AllExceptionsFilter } from '@core/presentation/filters/all-exceptions.filter';
 import { AppModule } from './app.module';
-import { LoggerService } from '@infrastructure/logger/logger.service';
+import { LoggerService } from '@core/infrastructure/logger/logger.service';
 import helmet from 'helmet';
 import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

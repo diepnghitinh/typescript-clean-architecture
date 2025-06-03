@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { LoggerService } from '@infrastructure/logger/logger.service';
+import { LoggerService } from '@core/infrastructure/logger/logger.service';
 
 interface IHttpExceptionResponse {
   message: string | string[];

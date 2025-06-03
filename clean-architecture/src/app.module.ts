@@ -4,7 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import * as joi from 'joi';
 import { getEnvFilePath } from '@shared/utils';
-import { LoggerModule } from '@infrastructure/logger/logger.module';
+import { LoggerModule } from '@core/infrastructure/logger/logger.module';
 import { LoggingInterceptor } from '@core/presentation/interceptors/logging.interceptor';
 import { TransformInterceptor } from '@core/presentation/interceptors/transform.interceptor';
 import { JwtAuthGuard } from '@core/presentation/guards/jwt-auth.guard';
