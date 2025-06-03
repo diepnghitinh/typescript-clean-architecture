@@ -22,10 +22,10 @@ export const routersConfig = {
         .setTitle('Website API')
         .setDescription('The API description')
         .setVersion('1.0')
-        .addTag('Users', '')
+        .addTag('Orders', '')
         .addBearerAuth(
             { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-            'Authorization',
+            'JWT-auth',
         )
         .addApiKey({ type: 'apiKey', name: 'X-Api-Key', in: 'header' }, 'X-Api-Key')
         .addServer(`/`)
@@ -36,4 +36,4 @@ export const routersConfig = {
 @Module({
     imports: [LibRouterModule.register(routersConfig.routers)],
 })
-export class IdentityPresentationModule {}
+export class WebPresentationModule {}

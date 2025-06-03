@@ -22,13 +22,11 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@ne
 
 // Commands
   
-@ApiTags('users')
-@Controller('users')
+@ApiTags('Products')
+@Controller('')
 @ApiBearerAuth('JWT-auth')
-export class UserController {
+export class ProductController {
   constructor(
-    private readonly queryBus: QueryBus,
-    private readonly commandBus: CommandBus,
   ) {}
 
   // @Get()

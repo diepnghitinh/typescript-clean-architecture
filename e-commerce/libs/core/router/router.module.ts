@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { RouterModule, Routes } from '@nestjs/core';
-import { extractModulesFromRoutes } from './helpers/';
+import { extractModulesFromRoutes } from './helpers';
 
 @Module({})
 export class LibRouterModule {

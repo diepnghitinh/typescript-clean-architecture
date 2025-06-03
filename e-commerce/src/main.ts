@@ -63,14 +63,16 @@ async function bootstrap() {
 
   presentationRoutes.forEach((router) => {
     const document = SwaggerModule.createDocument(app, router.swagger());
-    SwaggerModule.setup(`swagger/${router.swaggerPath}`, app, document);
+    const swaggerPath = `swagger/${router.swaggerPath}`;
+    Logger.log(`swagger is running on ${swaggerPath}`, 'Main');
+    SwaggerModule.setup(swaggerPath, app, document);
   });
 
   await Promise.race([
     app.startAllMicroservices(),
 
     app.listen(port, async () => {
-        Logger.log(`server is running on ${await app.getUrl()}`, 'Main');
+      Logger.log(`server is running on ${await app.getUrl()}`, 'Main');
     }),
 ]).catch((err) => console.log(err));
 }
