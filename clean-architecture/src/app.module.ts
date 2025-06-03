@@ -5,14 +5,14 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import * as joi from 'joi';
 import { getEnvFilePath } from '@shared/utils';
 import { LoggerModule } from '@infrastructure/logger/logger.module';
-import { LoggingInterceptor } from '@presentation/interceptors/logging.interceptor';
-import { TransformInterceptor } from '@presentation/interceptors/transform.interceptor';
-import { JwtAuthGuard } from '@presentation/guards/jwt-auth.guard';
-import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
-import { DomainExceptionsFilter } from '@presentation/filters/domain-exceptions.filter';
+import { LoggingInterceptor } from '@core/presentation/interceptors/logging.interceptor';
+import { TransformInterceptor } from '@core/presentation/interceptors/transform.interceptor';
+import { JwtAuthGuard } from '@core/presentation/guards/jwt-auth.guard';
+import { AllExceptionsFilter } from '@core/presentation/filters/all-exceptions.filter';
+import { DomainExceptionsFilter } from '@core/presentation/filters/domain-exceptions.filter';
 
 // Controllers
-import { HealthController } from '@presentation/controllers/health.controller';
+import { HealthController } from '@core/presentation/controllers/health.controller';
 
 @Module({
   imports: [

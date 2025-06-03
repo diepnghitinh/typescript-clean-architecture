@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import { AllExceptionsFilter } from '@core/presentation/filters/all-exceptions.filter';
 import { AppModule } from './app.module';
 import { LoggerService } from '@infrastructure/logger/logger.service';
 import helmet from 'helmet';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
+import { presentationRoutes } from '@presentation/routers.swagger';
+import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -51,6 +53,18 @@ async function bootstrap() {
   // Global exception filter
   const exceptionLogger = await app.resolve(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(exceptionLogger));
+
+  // Swagger init
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: [''],
+    prefix: '',
+  });
+
+  presentationRoutes.forEach((router) => {
+    const document = SwaggerModule.createDocument(app, router.swagger());
+    SwaggerModule.setup(`swagger/${router.path}`, app, document);
+  });
 
   await Promise.race([
     app.startAllMicroservices(),
