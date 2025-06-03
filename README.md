@@ -120,7 +120,9 @@
         * Email chính của khách hàng phải là duy nhất.
         * Địa chỉ giao hàng mặc định phải là một trong các địa chỉ đã lưu của khách hàng.
 
+# Context Mapping
 
+```mermaid
 graph TD
     subgraph Legend
         direction LR
@@ -155,7 +157,7 @@ graph TD
         CUST -- Published Language (CustomerUpdatedEvent) --> PAY
         ORD -- Conformist (Customer Info) --> CUST
     end
-
+```
 
 # Resources
 - https://github.com/Sairyss/domain-driven-hexagon
