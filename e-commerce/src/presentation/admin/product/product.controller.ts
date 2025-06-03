@@ -50,7 +50,6 @@ export class ProductController {
   //   return this.queryBus.execute(new GetUserQuery(id));
   // }
 
-  @Public()
   @Get()
   findAll(
   ) {
