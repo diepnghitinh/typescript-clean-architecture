@@ -24,10 +24,7 @@ export const dataSourceOptions = (
     useUTC: true,
     maxQueryExecutionTime: 15000,
     migrationsTransactionMode: 'all',
-    cache: {
-        type: 'database',
-        tableName: 'configurable-table-query-result-cache',
-    },
+    cache: false,
     logger: new TypeOrmLogger(),
     replication: {
         master: {

@@ -63,7 +63,7 @@ async function bootstrap() {
 
   presentationRoutes.forEach((router) => {
     const document = SwaggerModule.createDocument(app, router.swagger());
-    SwaggerModule.setup(`swagger/${router.path}`, app, document);
+    SwaggerModule.setup(`swagger/${router.swaggerPath}`, app, document);
   });
 
   await Promise.race([

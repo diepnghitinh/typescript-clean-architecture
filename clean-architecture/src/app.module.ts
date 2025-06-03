@@ -13,6 +13,7 @@ import { DomainExceptionsFilter } from '@core/presentation/filters/domain-except
 
 // Controllers
 import { HealthController } from '@core/presentation/controllers/health.controller';
+import { TypeOrmInfrastructureModule } from '@infrastructure/database/typeorm/typeorm.module';
 
 @Module({
   imports: [
@@ -27,6 +28,9 @@ import { HealthController } from '@core/presentation/controllers/health.controll
 
     // Logging
     LoggerModule,
+
+    // Database
+    TypeOrmInfrastructureModule,
   ],
   controllers: [
     HealthController

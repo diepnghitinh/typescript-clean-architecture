@@ -1,4 +1,4 @@
-import { routersConfig as IdentityRouters } from "./web/identity.module";
+import { routersConfig as IdentityRouters } from "./web/web.module";
 
 export const presentationRoutes = [
     IdentityRouters

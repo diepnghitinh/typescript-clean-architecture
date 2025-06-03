@@ -2,23 +2,24 @@ import { LibRouterModule } from '@core/router/router.module';
 import { Module } from '@nestjs/common';
 import { APP_GUARD, Reflector, Routes } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
+import { WebOrderPresentationModule } from './order/order.module';
 
 export const routersConfig = {
-    path: 'identity',
     routers: [
         {
-            path: '/',
+            path: '/web',
             children: [
                 {
-                    path: 'users',
-                    module: UserPresentationModule,
+                    path: 'orders',
+                    module: WebOrderPresentationModule,
                 },
             ],
         },
     ],
+    swaggerPath: 'web',
     swagger: () => {
         return new DocumentBuilder()
-        .setTitle('Identity API')
+        .setTitle('Website API')
         .setDescription('The API description')
         .setVersion('1.0')
         .addTag('Users', '')
