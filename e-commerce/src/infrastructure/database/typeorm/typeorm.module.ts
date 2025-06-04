@@ -2,7 +2,7 @@ import { Global, Module, Provider } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { typeOrmReportModuleOptions } from "./typeorm.options";
-import { dataSourceRepository } from '@core/database';
+import { dataSourceRepository } from '@core/infrastructure/database';
 import { DataSource } from "typeorm";
 
 export const RepositoryProviders: Provider[] = [

@@ -6,7 +6,7 @@ import { cwd, env } from 'process';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { Logger } from '@nestjs/common';
-import TypeOrmLogger from '@core/database/typeorm/logger';
+import TypeOrmLogger from '@core/infrastructure/database/typeorm/logger';
 
 const configService = new ConfigService();
 

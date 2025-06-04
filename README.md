@@ -1,7 +1,7 @@
 # E-Commerce & Clean Architecture
 
 # Core Domain & Sub-Domain
-![CoreDomain](./docs/core-domain.png)
+![CoreDomain](./docs/images/core-domain.png)
 
 # Bounded Contexts, Aggregates & Entities
 

@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, Inject } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { DomainException } from '@core/exceptions/domain-exceptions';
+import { DomainException } from '@shared/exceptions/domain-exceptions';
 import { LoggerService } from '@core/infrastructure/logger/logger.service';
 
 @Catch(DomainException)

@@ -1,5 +1,5 @@
 import { LoginDto } from '@application/auth/dtos/login.dto';
-import { Public } from '@core/decorators/public.decorator';
+import { GetUserLoginUsecase } from '@application/auth/use-cases/get-user-login.usecase';
 import {
   Body,
   Controller,
@@ -9,12 +9,14 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Public } from '@shared/decorators';
 
 
 @ApiTags('Auth')
 @Controller()
 export class AuthController {
   constructor(
+    private readonly getUserLoginUsecase: GetUserLoginUsecase,
   ) {}
 
   @Public()
@@ -28,7 +30,7 @@ export class AuthController {
   })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid credentials' })
   async login(@Body() loginDto: LoginDto) {
-    return loginDto;
+    return this.getUserLoginUsecase.query(loginDto);
   }
 
 }
