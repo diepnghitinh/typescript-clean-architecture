@@ -15,6 +15,7 @@ import { DomainExceptionsFilter } from '@core/presentation/filters/domain-except
 import { HealthController } from '@core/presentation/controllers/health.controller';
 import { TypeOrmInfrastructureModule } from '@infrastructure/database/typeorm/typeorm.module';
 import { PresentationModule } from '@presentation/presentation.module';
+import { MessagingInfrastructureModule } from '@infrastructure/messaging/messaging.module';
 
 @Module({
   imports: [
@@ -32,6 +33,9 @@ import { PresentationModule } from '@presentation/presentation.module';
 
     // Database
     TypeOrmInfrastructureModule,
+
+    // Messaging
+    MessagingInfrastructureModule,
 
     PresentationModule,
   ],

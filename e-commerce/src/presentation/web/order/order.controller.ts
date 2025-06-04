@@ -1,6 +1,6 @@
-import { Public } from '@core/decorators/public.decorator';
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from '@shared/decorators';
 
 @Controller()
 @ApiTags('Orders')
