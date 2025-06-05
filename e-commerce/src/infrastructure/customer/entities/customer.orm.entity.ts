@@ -1,8 +1,10 @@
+import { BaseEntity } from '@core/infrastructure/database';
+import { UserOrmEntity } from '@infrastructure/auth/entities/user.orm.entity';
 import { OrderOrmEntity } from '@infrastructure/order/entities/order.orm.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity('customers')
-export class CustomerOrmEntity {
+export class CustomerOrmEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

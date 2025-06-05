@@ -5,7 +5,15 @@ import { typeOrmReportModuleOptions } from "./typeorm.options";
 import { dataSourceRepository } from '@core/infrastructure/database';
 import { DataSource } from "typeorm";
 
+// Repositories
+import { IUserRepository } from "@application/auth/repositories/user.repository";
+import { UserRepository } from "@infrastructure/auth/repositories/user.repository";
+
 export const RepositoryProviders: Provider[] = [
+    {
+        provide: IUserRepository,
+        useClass: UserRepository,
+    },
 ]
 
 @Global()
