@@ -1,35 +1,54 @@
 import { LoginDto } from '@application/auth/dtos/login.dto';
-import { GetUserLoginUsecase } from '@application/auth/use-cases/get-user-login.usecase';
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards} from '@nestjs/common';
+import {ApiTags, ApiOperation, ApiResponse, ApiBearerAuth} from '@nestjs/swagger';
 import { Public } from '@shared/decorators';
+import { AuthenticationException } from '@shared/exceptions/domain-exceptions';
+import { UserAccountMapper } from '@application/auth/mappers/user-account.mapper';
+import { AccessTokenMapper } from '@application/auth/mappers/access-token.mapper';
+import { GetAuthTokenUsecase } from '@application/auth/use-cases/get-auth-token.usecase';
+import { GetUserUsecase } from '@application/auth/use-cases/get-user.usecase';
+import { ApiAuthBearerGuard } from '@core/presentation/guards/auth-bearer.guard';
 
 @ApiTags('Auth')
 @Controller()
+@ApiBearerAuth('JWT-auth')
+@UseGuards(ApiAuthBearerGuard)
 export class AuthController {
-  constructor(
-    private readonly getUserLoginUsecase: GetUserLoginUsecase,
-  ) {}
+    constructor(
+        private readonly getAuthTokenUsecase: GetAuthTokenUsecase,
+        private readonly getUserUsecase: GetUserUsecase,
+        private readonly userAccountMapper: UserAccountMapper,
+        private readonly accessTokenMapper: AccessTokenMapper,
+    ) {}
 
-  @Public()
-  @Post('login')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Authenticate user and get tokens' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description:
-      'User successfully authenticated. Returns access token, refresh token, and user data.',
-  })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid credentials' })
-  async login(@Body() loginDto: LoginDto) {
-    return this.getUserLoginUsecase.query(loginDto);
-  }
+    @Public()
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Authenticate user and get tokens' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description:
+            'User successfully authenticated. Returns access token, refresh token, and user data.',
+    })
+    @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid credentials' })
+    async login(@Body() loginDto: LoginDto) {
+        try {
+            const result = await this.getAuthTokenUsecase.query(loginDto);
+            return this.accessTokenMapper.toResponse(result.getValue());
+        } catch (e) {
+            throw new AuthenticationException(e.message);
+        }
+    }
 
+    @Get('users/:user_id')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Get current user logged' })
+    async getUser(@Param('user_id') userId: string) {
+        try {
+            const result = await this.getUserUsecase.query(userId);
+            return this.userAccountMapper.toResponse(result.getValue());
+        } catch (e) {
+            throw new BadRequestException(e.message);
+        }
+    }
 }

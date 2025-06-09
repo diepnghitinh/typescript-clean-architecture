@@ -19,19 +19,19 @@ export const routersConfig = {
     swaggerPath: 'web',
     swagger: () => {
         return new DocumentBuilder()
-        .setTitle('Website API')
-        .setDescription('The API description')
-        .setVersion('1.0')
-        .addTag('Orders', '')
-        .addBearerAuth(
-            { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-            'JWT-auth',
-        )
-        .addApiKey({ type: 'apiKey', name: 'X-Api-Key', in: 'header' }, 'X-Api-Key')
-        .addServer(`/`)
-        .build();
-    }
-}
+            .setTitle('Website API')
+            .setDescription('The API description')
+            .setVersion('1.0')
+            .addTag('Orders', '')
+            .addBearerAuth(
+                { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+                'JWT-auth',
+            )
+            .addApiKey({ type: 'apiKey', name: 'X-Api-Key', in: 'header' }, 'X-Api-Key')
+            .addServer(`/`)
+            .build();
+    },
+};
 
 @Module({
     imports: [LibRouterModule.register(routersConfig.routers)],

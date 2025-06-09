@@ -1,20 +1,20 @@
-import { Global, Module, Provider } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { typeOrmReportModuleOptions } from "./typeorm.options";
+import { Global, Module, Provider } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { typeOrmReportModuleOptions } from './typeorm.options';
 import { dataSourceRepository } from '@core/infrastructure/database';
-import { DataSource } from "typeorm";
+import { DataSource } from 'typeorm';
 
 // Repositories
-import { IUserRepository } from "@application/auth/repositories/user.repository";
-import { UserRepository } from "@infrastructure/auth/repositories/user.repository";
+import { IUserRepository } from '@application/auth/repositories/user.repository';
+import { UserRepository } from '@infrastructure/auth/repositories/user.repository';
 
 export const RepositoryProviders: Provider[] = [
     {
         provide: IUserRepository,
         useClass: UserRepository,
     },
-]
+];
 
 @Global()
 @Module({
@@ -33,7 +33,7 @@ export const RepositoryProviders: Provider[] = [
             },
         }),
     ],
-    providers: [...RepositoryProviders,],
-    exports: [...RepositoryProviders,],
+    providers: [...RepositoryProviders],
+    exports: [...RepositoryProviders],
 })
 export class TypeOrmInfrastructureModule {}

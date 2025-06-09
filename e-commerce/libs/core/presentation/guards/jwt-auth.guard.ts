@@ -5,31 +5,31 @@ import { IS_PUBLIC_KEY } from '@shared/decorators';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  constructor(private reflector: Reflector) {
-    super();
-  }
-
-  canActivate(context: ExecutionContext) {
-    // Check if the route is marked as public
-    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-
-    if (isPublic) {
-      return true;
+    constructor(private reflector: Reflector) {
+        super();
     }
 
-    // If not public, apply JWT guard
-    return super.canActivate(context);
-  }
+    canActivate(context: ExecutionContext) {
+        // Check if the route is marked as public
+        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
 
-  handleRequest(err, user, _info) {
-    // You can throw an exception based on either "info" or "err" arguments
-    if (err || !user) {
-      throw err || new UnauthorizedException('Invalid token or expired session');
+        if (isPublic) {
+            return true;
+        }
+
+        // If not public, apply JWT guard
+        return super.canActivate(context);
     }
 
-    return user;
-  }
+    handleRequest(err, user, _info) {
+        // You can throw an exception based on either "info" or "err" arguments
+        if (err || !user) {
+            throw err || new UnauthorizedException('Invalid token or expired session');
+        }
+
+        return user;
+    }
 }

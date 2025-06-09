@@ -1,5 +1,5 @@
 import { env } from 'process';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import * as joi from 'joi';
@@ -16,58 +16,50 @@ import { HealthController } from '@core/presentation/controllers/health.controll
 import { TypeOrmInfrastructureModule } from '@infrastructure/database/typeorm/typeorm.module';
 import { PresentationModule } from '@presentation/presentation.module';
 import { MessagingInfrastructureModule } from '@infrastructure/messaging/messaging.module';
+import { CoreModule } from '@core/core.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: getEnvFilePath(env.NODE_ENV),
-      expandVariables: true,
-      validationSchema: joi.object({
-        PORT: joi.number().required(),
-      }),
-    }),
+    imports: [
+        CoreModule,
 
-    // Logging
-    LoggerModule,
+        // Logging
+        LoggerModule,
 
-    // Database
-    TypeOrmInfrastructureModule,
+        // Database
+        TypeOrmInfrastructureModule,
 
-    // Messaging
-    MessagingInfrastructureModule,
+        // Messaging
+        MessagingInfrastructureModule,
 
-    PresentationModule,
-  ],
-  controllers: [
-    HealthController
-  ],
-  providers: [
-    // Global interceptors
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor,
-    },
+        PresentationModule,
+    ],
+    controllers: [HealthController],
+    providers: [
+        // Global interceptors
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: LoggingInterceptor,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TransformInterceptor,
+        },
 
-    // Global filters
-    {
-      provide: APP_FILTER,
-      useClass: DomainExceptionsFilter,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
-    },
+        // Global filters
+        {
+            provide: APP_FILTER,
+            useClass: DomainExceptionsFilter,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: AllExceptionsFilter,
+        },
 
-    // Global guards
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-  ],
+        // Global guards
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+    ],
 })
 export class AppModule {}

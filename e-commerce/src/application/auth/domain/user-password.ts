@@ -21,7 +21,10 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
         super(props);
     }
 
-    public static async create(password: string, hashed: boolean = false): Promise<Result<UserPassword>> {
+    public static async create(
+        password: string,
+        hashed: boolean = false,
+    ): Promise<Result<UserPassword>> {
         const guardResult = Guard.againstNullOrUndefined(password, 'password');
         if (!guardResult.succeeded) {
             return Result.fail<UserPassword>(guardResult.message);

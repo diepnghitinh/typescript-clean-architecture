@@ -11,21 +11,25 @@ export const routersConfig = {
                 {
                     path: 'auth',
                     module: IdentityAuthPresentationModule,
-                }
+                },
             ],
         },
     ],
     swaggerPath: 'identity',
     swagger: () => {
         return new DocumentBuilder()
-        .setTitle('Identity API')
-        .setDescription('The API description')
-        .setVersion('1.0')
-        .addTag('Auth', '')
-        .addServer(`/`)
-        .build();
-    }
-}
+            .setTitle('Identity API')
+            .setDescription('The API description')
+            .setVersion('1.0')
+            .addTag('Auth', '')
+            .addBearerAuth(
+                { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+                'JWT-auth',
+            )
+            .addServer(`/`)
+            .build();
+    },
+};
 
 @Module({
     imports: [LibRouterModule.register(routersConfig.routers)],

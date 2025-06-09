@@ -1,13 +1,14 @@
-import { AggregateRoot } from "@core/domain/aggregate-root";
-import { UniqueEntityID } from "@core/domain/unique-entity-id";
-import { UserEmail } from "./user-email";
-import { UserPassword } from "./user-password";
-import { Result } from "@shared/logic/result";
+import { AggregateRoot } from '@core/domain/aggregate-root';
+import { UniqueEntityID } from '@core/domain/unique-entity-id';
+import { UserEmail } from './user-email';
+import { UserPassword } from './user-password';
+import { Result } from '@shared/logic/result';
 
 export interface UserAccountProps {
     userId: UniqueEntityID;
     email: UserEmail;
-    password: UserPassword;
+    password?: UserPassword;
+    fullName?: string;
 }
 
 export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
@@ -17,6 +18,10 @@ export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
 
     get userId(): UniqueEntityID {
         return this.props.userId;
+    }
+
+    get fullName(): string {
+        return this.props.fullName;
     }
 
     get email(): UserEmail {
@@ -33,7 +38,7 @@ export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
 
     public static async create(
         props: UserAccountProps,
-        id?: UniqueEntityID
+        id?: UniqueEntityID,
     ): Promise<Result<UserAccountEntity>> {
         return Result.ok<UserAccountEntity>(new UserAccountEntity(props, id));
     }
