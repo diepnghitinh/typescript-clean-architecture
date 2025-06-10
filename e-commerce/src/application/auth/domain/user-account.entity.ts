@@ -12,6 +12,10 @@ export interface UserAccountProps {
 }
 
 export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
+    private constructor(props: UserAccountProps, id?: UniqueEntityID) {
+        super(props, id);
+    }
+
     get id(): UniqueEntityID {
         return this._id;
     }
@@ -30,10 +34,6 @@ export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
 
     get password(): UserPassword {
         return this.props.password;
-    }
-
-    private constructor(props: UserAccountProps, id?: UniqueEntityID) {
-        super(props, id);
     }
 
     public static async create(
