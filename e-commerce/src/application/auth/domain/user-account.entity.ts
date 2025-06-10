@@ -40,6 +40,7 @@ export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
         props: UserAccountProps,
         id?: UniqueEntityID,
     ): Promise<Result<UserAccountEntity>> {
+        // TODO: Dispatch domain events
         return Result.ok<UserAccountEntity>(new UserAccountEntity(props, id));
     }
 

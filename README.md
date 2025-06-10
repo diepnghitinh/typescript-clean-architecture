@@ -166,3 +166,6 @@ graph TD
 - https://github.com/SAP/curated-resources-for-domain-driven-design/tree/main/blog
 - https://medium.com/building-inventa/how-we-used-event-storming-meetings-for-enabling-software-domain-driven-design-401e5d708eb
 - https://medium.com/@lambrych/domain-driven-design-ddd-strategic-design-explained-55e10b7ecc0f
+- https://medium.com/augury-research-and-development/practical-ddd-part-2-architectural-topics-1-aggregate-and-bounded-context-microservice-ecb180298207
+- https://dev.to/ruben_alapont/domain-events-and-event-sourcing-in-domain-driven-design-l0n
+- https://mehmetozkaya.medium.com/domain-events-in-ddd-and-domain-vs-integration-events-in-microservices-architecture-c8d92787de86

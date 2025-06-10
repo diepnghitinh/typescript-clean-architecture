@@ -5,7 +5,6 @@ import { IUserRepository } from '@application/auth/repositories/user.repository'
 import { UserAccountEntity } from '@application/auth/domain/user-account.entity';
 import { UniqueEntityID } from '@core/domain/unique-entity-id';
 import { UserEmail } from '@application/auth/domain/user-email';
-import { UserPassword } from '@application/auth/domain/user-password';
 import { BaseRepository } from '@core/infrastructure/database/typeorm/base/repository.base';
 import { CustomerOrmEntity } from '@infrastructure/customer/entities/customer.orm.entity';
 import { LogExecution } from '@shared/decorators';
