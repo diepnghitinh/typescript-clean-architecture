@@ -4,16 +4,16 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'ty
 
 @Entity('users')
 export class UserOrmEntity extends BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column({ unique: true })
-  username: string;
+    @Column({ unique: true })
+    username: string;
 
-  @Column()
-  password: string;
+    @Column()
+    password: string;
 
-  @OneToOne(() => CustomerOrmEntity)
-  @JoinColumn()
-  customer: CustomerOrmEntity;
+    @OneToOne(() => CustomerOrmEntity)
+    @JoinColumn()
+    customer: CustomerOrmEntity;
 }

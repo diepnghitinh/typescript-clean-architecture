@@ -1,9 +1,9 @@
 import { ProductEntity } from '../domain/entities/product.entity';
-import { ProductRepository } from '../repositories/product.repository';
+import { IProductRepository } from '../repositories/product.repository';
 import { UpdateProductDTO } from '../dtos/update-product.dto';
 
 export class UpdateProductUseCase {
-    constructor(private readonly productRepository: ProductRepository) {}
+    constructor(private readonly productRepository: IProductRepository) {}
 
     async execute(id: string, data: UpdateProductDTO): Promise<ProductEntity> {
         const product = await this.productRepository.findById(id);

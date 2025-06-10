@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { BaseEntity } from '@core/infrastructure/database';
 
 @Entity('products')
-export class ProductOrmEntity {
+export class ProductOrmEntity extends BaseEntity {
     @PrimaryGeneratedColumn('uuid') // ID duy nhất cho sản phẩm
     id: string;
 
@@ -19,12 +20,6 @@ export class ProductOrmEntity {
 
     @Column({ type: 'boolean', default: true })
     isActive: boolean;
-
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updatedAt: Date;
 
     // --- Logic nghiệp vụ (Behavior) ---
     // Trong DDD, Entity không chỉ là dữ liệu mà còn có hành vi

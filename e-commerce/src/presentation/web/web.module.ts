@@ -27,7 +27,6 @@ export const routersConfig = {
                 { in: 'header', type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
                 'JWT-auth',
             )
-            .addApiKey({ type: 'apiKey', name: 'X-Api-Key', in: 'header' }, 'X-Api-Key')
             .addServer(`/`)
             .build();
     },

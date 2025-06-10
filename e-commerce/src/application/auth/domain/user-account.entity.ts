@@ -3,13 +3,7 @@ import { UniqueEntityID } from '@core/domain/unique-entity-id';
 import { UserEmail } from './user-email';
 import { UserPassword } from './user-password';
 import { Result } from '@shared/logic/result';
-
-export interface UserAccountProps {
-    userId: UniqueEntityID;
-    email: UserEmail;
-    password?: UserPassword;
-    fullName?: string;
-}
+import { UserAccountProps } from '@application/auth/domain/user-account.props';
 
 export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
     private constructor(props: UserAccountProps, id?: UniqueEntityID) {

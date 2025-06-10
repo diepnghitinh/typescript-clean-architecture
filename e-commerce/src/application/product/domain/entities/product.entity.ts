@@ -1,8 +1,9 @@
 import { Entity } from '@core/domain/entity';
+import { AggregateRoot, UniqueEntityID } from '@core/domain';
+import { Result } from '@shared/logic/result';
 import { ProductProps } from './product.props';
-import { UniqueEntityID } from '@core/domain';
 
-export class ProductEntity extends Entity<ProductProps> {
+export class ProductEntity extends AggregateRoot<ProductProps> {
     private constructor(props: ProductProps, id?: UniqueEntityID) {
         super(props, id);
     }
@@ -11,8 +12,12 @@ export class ProductEntity extends Entity<ProductProps> {
         return this._id;
     }
 
-    public static create(props: ProductProps, id?: UniqueEntityID): ProductEntity {
-        return new ProductEntity(props, id);
+    public static async create(
+        props: ProductProps,
+        id?: UniqueEntityID,
+    ): Promise<Result<ProductEntity>> {
+        // TODO: Dispatch domain events
+        return Result.ok<ProductEntity>(new ProductEntity(props, id));
     }
 
     get name(): string {

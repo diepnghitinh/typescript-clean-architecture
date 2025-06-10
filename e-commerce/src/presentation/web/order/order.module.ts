@@ -7,13 +7,9 @@ import { GetOrderUseCase } from '@application/order/use-cases/get-order.use-case
 import { ListOrdersUseCase } from '@application/order/use-cases/list-orders.use-case';
 import { CancelOrderUseCase } from '@application/order/use-cases/cancel-order.use-case';
 import { OrderRepository } from '@infrastructure/order/repositories/order.repository';
-import { Order } from '@infrastructure/order/entities/order.entity';
-import { OrderItem } from '@infrastructure/order/entities/order-item.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Order, OrderItem]),
-    ],
+    imports: [],
     providers: [
         CreateOrderUseCase,
         UpdateOrderUseCase,

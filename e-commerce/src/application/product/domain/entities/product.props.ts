@@ -3,7 +3,6 @@ export interface ProductProps {
     description: string;
     price: number;
     stock: number;
-    category: string;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;

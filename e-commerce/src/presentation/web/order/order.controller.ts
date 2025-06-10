@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '@shared/decorators';
 import { CreateOrderUseCase } from '@application/order/use-cases/create-order.use-case';
@@ -37,10 +37,7 @@ export class OrderController {
     @Get()
     @ApiOperation({ summary: 'List all orders' })
     @ApiResponse({ status: 200, description: 'Returns list of orders' })
-    async findAll(
-        @Query('customerId') customerId?: string,
-        @Query('status') status?: OrderStatus,
-    ) {
+    async findAll(@Query('customerId') customerId?: string, @Query('status') status?: OrderStatus) {
         return this.listOrdersUseCase.execute(customerId, status);
     }
 
@@ -58,10 +55,7 @@ export class OrderController {
     @ApiOperation({ summary: 'Update order' })
     @ApiResponse({ status: 200, description: 'Order updated successfully' })
     @ApiResponse({ status: 404, description: 'Order not found' })
-    async update(
-        @Param('id') id: string,
-        @Body() updateOrderDto: UpdateOrderDTO,
-    ) {
+    async update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDTO) {
         return this.updateOrderUseCase.execute(id, updateOrderDto);
     }
 
