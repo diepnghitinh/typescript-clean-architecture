@@ -7,16 +7,15 @@ import { UserAccountMapper } from '@application/auth/mappers/user-account.mapper
 import { AccessTokenMapper } from '@application/auth/mappers/access-token.mapper';
 import { GetAuthTokenUsecase } from '@application/auth/use-cases/get-auth-token.usecase';
 import { GetUserUsecase } from '@application/auth/use-cases/get-user.usecase';
-import { ApiAuthBearerGuard } from '@core/presentation/guards/auth-bearer.guard';
 
 @ApiTags('Auth')
 @Controller()
 @ApiBearerAuth('JWT-auth')
-@UseGuards(ApiAuthBearerGuard)
 export class AuthController {
     constructor(
         private readonly getAuthTokenUsecase: GetAuthTokenUsecase,
         private readonly getUserUsecase: GetUserUsecase,
+        // Mappers
         private readonly userAccountMapper: UserAccountMapper,
         private readonly accessTokenMapper: AccessTokenMapper,
     ) {}

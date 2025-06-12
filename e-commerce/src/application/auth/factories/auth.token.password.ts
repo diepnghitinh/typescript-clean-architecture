@@ -12,13 +12,13 @@ export class AuthTokenPassword extends AuthTokenBase implements IAuthFactory {
             {
                 accessToken: this.jwtService.sign({
                     token_type: 'access',
-                    user_id: user.id.toString(),
+                    user_id: user.userId.toString(),
                     user_full_name: user.fullName,
                 }),
                 refreshToken: this.jwtService.sign(
                     {
                         token_type: 'refresh',
-                        user_id: user.id.toString(),
+                        user_id: user.userId.toString(),
                         user_full_name: user.fullName,
                     },
                     {

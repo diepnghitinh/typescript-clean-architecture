@@ -8,14 +8,14 @@ import { BaseRepository } from '@core/infrastructure/database/typeorm/base/repos
 
 @Injectable()
 export class ProductRepository
-    extends BaseRepository<ProductEntity, ProductOrmEntity>
+    extends BaseRepository<ProductEntity | ProductEntity[], ProductOrmEntity>
     implements IProductRepository
 {
     constructor(dataSource: DataSource) {
         super(ProductOrmEntity, dataSource);
     }
 
-    async findById(id: string): Promise<ProductEntity | null> {
+    async findById(id: string): Promise<ProductEntity | any> {
         const product = await this.repository.findOne({
             where: { id },
         });
@@ -25,7 +25,22 @@ export class ProductRepository
         return this.toDomain(product);
     }
 
-    async findByName(name: string): Promise<ProductEntity | null> {
+    async findByIds(productIds: string[]): Promise<ProductEntity[] | any> {
+        const products = await this.repository
+            .createQueryBuilder('product')
+            .select('product.id')
+            .addSelect('product.price')
+            .where('product.id in (:...productIds)', {
+                productIds,
+            })
+            .getMany();
+
+        if (!products) return null;
+
+        return this.toDomain(products);
+    }
+
+    async findByName(name: string): Promise<ProductEntity | any> {
         const product = await this.repository.findOne({
             where: { name },
         });
@@ -72,25 +87,73 @@ export class ProductRepository
         await this.repository.delete({ id });
     }
 
-    async toDomain(ormEntity: ProductOrmEntity): Promise<ProductEntity> {
-        const productOrError = await ProductEntity.create(
-            {
-                name: ormEntity.name,
-                description: ormEntity.description,
-                price: ormEntity.price,
-                stock: ormEntity.stock,
-                isActive: ormEntity.isActive,
-                createdAt: ormEntity.createdAt,
-                updatedAt: ormEntity.updatedAt,
-            },
-            new UniqueEntityID(ormEntity.id),
-        );
+    async decrementStock(stockUpdates: { productId: string; quality: number }[]): Promise<void> {
+        // Bulk update stock for multiple products
+        // Use a single query to decrement stock for each product by its corresponding quantity
+        // Note: TypeORM does not natively support VALUES in UPDATE for all drivers, so we use raw query
 
-        if (productOrError.isFailure) {
-            throw new Error('Failed to create user entity');
+        if (stockUpdates.length === 0) return;
+
+        // Build the CASE WHEN SQL for bulk update
+        const cases = stockUpdates
+            .map((u) => `WHEN id = '${u.productId}' THEN stock - ${u.quality}`)
+            .join(' ');
+
+        const ids = stockUpdates.map((u) => u.productId);
+
+        // Compose the SQL
+        const sql = `
+            UPDATE products
+            SET stock = CASE
+                ${cases}
+                ELSE stock
+            END
+            WHERE id IN (${ids.map((_value) => `'${_value}'`).join(', ')})
+        `;
+
+        await this.repository.query(sql);
+    }
+
+    async toDomain(
+        ormEntity: ProductOrmEntity | ProductOrmEntity[],
+    ): Promise<ProductEntity | ProductEntity[] | null> {
+        const defineProduct = async (orm) => {
+            return await ProductEntity.create(
+                {
+                    id: orm.id,
+                    name: orm.name,
+                    description: orm.description,
+                    price: orm.price,
+                    stock: orm.stock,
+                    isActive: orm.isActive,
+                    createdAt: orm.createdAt,
+                    updatedAt: orm.updatedAt,
+                },
+                new UniqueEntityID(orm.id),
+            );
+        };
+
+        if (ormEntity instanceof ProductOrmEntity) {
+            const productOrError = await defineProduct(ormEntity);
+
+            if (productOrError.isFailure) {
+                throw new Error('Failed to create product entity');
+            }
+
+            return productOrError.getValue();
         }
 
-        return productOrError.getValue();
+        return Promise.all(
+            ormEntity.map(async (orm) => {
+                const productOrError = await defineProduct(orm);
+
+                if (productOrError.isFailure) {
+                    throw new Error('Failed to create product entity');
+                }
+
+                return productOrError.getValue();
+            }),
+        );
     }
 
     toOrmEntity(domainEntity: ProductEntity): void {}

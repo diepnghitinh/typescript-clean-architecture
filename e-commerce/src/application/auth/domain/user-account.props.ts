@@ -7,4 +7,5 @@ export interface UserAccountProps {
     email: UserEmail;
     password?: UserPassword;
     fullName?: string;
+    customerId?: string;
 }

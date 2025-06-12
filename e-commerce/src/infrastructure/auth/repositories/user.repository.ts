@@ -23,7 +23,7 @@ export class UserRepository
     async findByEmailPassword(email: string, password: string): Promise<UserAccountEntity | null> {
         const user = await this.dataSource
             .createQueryBuilder()
-            .select('user.id')
+            .select('user.id', 'userId')
             .addSelect('customer.firstName', 'firstName')
             .addSelect('customer.lastName', 'lastName')
             .from(UserOrmEntity, 'user')
@@ -45,7 +45,8 @@ export class UserRepository
         const user = await this.dataSource
             .createQueryBuilder()
             .from(UserOrmEntity, 'user')
-            .select('user.id')
+            .select('user.id', 'userId')
+            .addSelect('customer.id', 'customerId')
             .addSelect('customer.email', 'email')
             .addSelect('customer.firstName', 'firstName')
             .addSelect('customer.lastName', 'lastName')
@@ -69,9 +70,10 @@ export class UserRepository
 
         const userOrError = await UserAccountEntity.create(
             {
-                userId: new UniqueEntityID(ormEntity.id),
+                userId: new UniqueEntityID(ormEntity.userId),
                 email: userEmailOrError.getValue(),
                 fullName: `${ormEntity.lastName} ${ormEntity.firstName}`,
+                customerId: ormEntity.customerId,
             },
             new UniqueEntityID(ormEntity.id),
         );

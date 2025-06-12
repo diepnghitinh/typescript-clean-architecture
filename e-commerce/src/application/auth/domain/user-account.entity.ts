@@ -22,6 +22,10 @@ export class UserAccountEntity extends AggregateRoot<UserAccountProps> {
         return this.props.fullName;
     }
 
+    get customerId(): string {
+        return this.props.customerId;
+    }
+
     get email(): UserEmail {
         return this.props.email;
     }

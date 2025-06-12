@@ -1,5 +1,5 @@
 import { ProductEntity } from '../domain/entities/product.entity';
-import { ProductRepository } from '../repositories/product.repository';
+import { ProductRepository } from '@infrastructure/product/repositories/product.repository';
 
 export class GetProductUseCase {
     constructor(private readonly productRepository: ProductRepository) {}

@@ -1,4 +1,3 @@
-import { Entity } from '@core/domain/entity';
 import { AggregateRoot, UniqueEntityID } from '@core/domain';
 import { Result } from '@shared/logic/result';
 import { ProductProps } from './product.props';
@@ -34,10 +33,6 @@ export class ProductEntity extends AggregateRoot<ProductProps> {
 
     get stock(): number {
         return this.props.stock;
-    }
-
-    get category(): string {
-        return this.props.category;
     }
 
     get isActive(): boolean {

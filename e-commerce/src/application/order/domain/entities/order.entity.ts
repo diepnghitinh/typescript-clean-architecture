@@ -1,9 +1,10 @@
-import { Entity } from '@core/domain/entity';
-import { OrderProps, OrderStatus, OrderItem } from './order.props';
-import { UniqueEntityID } from '@core/domain';
+import { OrderProps, OrderStatus } from './order.props';
+import { AggregateRoot, UniqueEntityID } from '@core/domain';
 import { Result } from '@shared/logic/result';
+import { OrderItemEntity } from '@application/order/domain/entities/order-item.entity';
+import { Guard } from '@shared/logic/guard';
 
-export class OrderEntity extends Entity<OrderProps> {
+export class OrderEntity extends AggregateRoot<OrderProps> {
     private constructor(props: OrderProps, id?: UniqueEntityID) {
         super(props, id);
     }
@@ -12,15 +13,47 @@ export class OrderEntity extends Entity<OrderProps> {
         return this._id;
     }
 
-    public static create(props: OrderProps, id?: UniqueEntityID): Result<OrderEntity> {
-        return Result.ok<OrderEntity>(new OrderEntity(props, id));
+    public static async create(
+        props: OrderProps,
+        id?: UniqueEntityID,
+    ): Promise<Result<OrderEntity>> {
+        const guardResult = Guard.againstNullOrUndefinedBulk([
+            { argument: props.customerId, argumentName: 'customerId' },
+            { argument: props.totalPrice, argumentName: 'totalPrice' },
+            { argument: props.shippingAddress, argumentName: 'shippingAddress' },
+            { argument: props.paymentMethod, argumentName: 'paymentMethod' },
+            { argument: props.items, argumentName: 'items' },
+        ]);
+
+        if (!guardResult.succeeded) {
+            return Result.fail<OrderEntity>(guardResult.message);
+        }
+
+        const order = new OrderEntity(
+            {
+                ...props,
+                items: props.items ? props.items : [],
+            },
+            id,
+        );
+
+        const idWasProvided = !!id;
+        // Dispatch to Domain Event
+        if (!idWasProvided) {
+            // order.addDomainEvent(new OrderCreatedEvent());
+            // await order.addSagaEvent<OrderSubmitted>(
+            //     ,
+            // );
+        }
+
+        return Result.ok<OrderEntity>(order);
     }
 
     get customerId(): string {
         return this.props.customerId;
     }
 
-    get items(): OrderItem[] {
+    get items(): OrderItemEntity[] {
         return this.props.items;
     }
 
@@ -28,8 +61,8 @@ export class OrderEntity extends Entity<OrderProps> {
         return this.props.status;
     }
 
-    get totalAmount(): number {
-        return this.props.totalAmount;
+    get totalPrice(): number {
+        return this.props.totalPrice;
     }
 
     get shippingAddress(): string {
@@ -40,12 +73,9 @@ export class OrderEntity extends Entity<OrderProps> {
         return this.props.paymentMethod;
     }
 
-    public addItem(item: OrderItem): void {
+    public addItem(item: OrderItemEntity): void {
         if (item.quantity <= 0) {
             throw new Error('Item quantity must be greater than zero');
-        }
-        if (item.price < 0) {
-            throw new Error('Item price cannot be negative');
         }
 
         const existingItemIndex = this.props.items.findIndex((i) => i.productId === item.productId);
@@ -55,8 +85,6 @@ export class OrderEntity extends Entity<OrderProps> {
         } else {
             this.props.items.push(item);
         }
-
-        this.updateTotalAmount();
     }
 
     public removeItem(productId: string): void {
@@ -64,7 +92,6 @@ export class OrderEntity extends Entity<OrderProps> {
 
         if (itemIndex >= 0) {
             this.props.items.splice(itemIndex, 1);
-            this.updateTotalAmount();
         }
     }
 
@@ -79,31 +106,9 @@ export class OrderEntity extends Entity<OrderProps> {
         }
 
         item.quantity = quantity;
-        this.updateTotalAmount();
     }
 
     public updateStatus(status: OrderStatus): void {
         this.props.status = status;
-    }
-
-    public updateShippingAddress(address: string): void {
-        if (!address.trim()) {
-            throw new Error('Shipping address cannot be empty');
-        }
-        this.props.shippingAddress = address;
-    }
-
-    public updatePaymentMethod(method: string): void {
-        if (!method.trim()) {
-            throw new Error('Payment method cannot be empty');
-        }
-        this.props.paymentMethod = method;
-    }
-
-    private updateTotalAmount(): void {
-        this.props.totalAmount = this.props.items.reduce(
-            (total, item) => total + item.price * item.quantity,
-            0,
-        );
     }
 }

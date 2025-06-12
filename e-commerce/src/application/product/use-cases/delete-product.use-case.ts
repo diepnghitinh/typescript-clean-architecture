@@ -1,15 +1,15 @@
-import { ProductRepository } from '../repositories/product.repository';
+import { IProductRepository } from '../repositories/product.repository';
 
 export class DeleteProductUseCase {
-  constructor(private readonly productRepository: ProductRepository) {}
+    constructor(private readonly productRepository: IProductRepository) {}
 
-  async execute(id: string): Promise<void> {
-    const product = await this.productRepository.findById(id);
-    
-    if (!product) {
-      throw new Error('Product not found');
+    async execute(id: string): Promise<void> {
+        const product = await this.productRepository.findById(id);
+
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        await this.productRepository.delete(id);
     }
-
-    await this.productRepository.delete(id);
-  }
-} 
+}

@@ -3,10 +3,9 @@ import { DataSource } from 'typeorm';
 import { IOrderRepository } from '@application/order/repositories/order.repository';
 import { OrderEntity } from '@application/order/domain/entities/order.entity';
 import { OrderStatus } from '@application/order/domain/entities/order.props';
-import { UniqueEntityID } from '@core/domain';
-import { ProductOrmEntity } from '@infrastructure/product/entities/product.orm.entity';
 import { BaseRepository } from '@core/infrastructure/database/typeorm/base/repository.base';
 import { OrderOrmEntity } from '@infrastructure/order/entities/order.orm.entity';
+import { plainToClassFromExist } from 'class-transformer';
 
 @Injectable()
 export class OrderRepository
@@ -14,37 +13,37 @@ export class OrderRepository
     implements IOrderRepository
 {
     constructor(dataSource: DataSource) {
-        super(ProductOrmEntity, dataSource);
+        super(OrderOrmEntity, dataSource);
     }
 
-    async findById(id: string): Promise<OrderEntity | null> {
-        const order = await this.repository.findOne({
-            where: { id },
-            relations: ['items'],
-        });
-
-        if (!order) return null;
-
-        return OrderEntity.create(
-            {
-                customerId: order.customerId,
-                items: order.items.map((item) => ({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price,
-                })),
-                status: order.status as OrderStatus,
-                totalAmount: order.totalAmount,
-                shippingAddress: order.shippingAddress,
-                paymentMethod: order.paymentMethod,
-                createdAt: order.createdAt,
-                updatedAt: order.updatedAt,
-            },
-            new UniqueEntityID(order.id),
-        ).getValue();
+    async findById(id: string): Promise<OrderEntity | any> {
+        // const order = await this.repository.findOne({
+        //     where: { id },
+        //     relations: ['items'],
+        // });
+        //
+        // if (!order) return null;
+        //
+        // return OrderEntity.create(
+        //     {
+        //         customerId: order.customerId,
+        //         items: order.items.map((item) => ({
+        //             productId: item.productId,
+        //             quantity: item.quantity,
+        //             price: item.price,
+        //         })),
+        //         status: order.status as OrderStatus,
+        //         totalAmount: order.totalAmount,
+        //         shippingAddress: order.shippingAddress,
+        //         paymentMethod: order.paymentMethod,
+        //         createdAt: order.createdAt,
+        //         updatedAt: order.updatedAt,
+        //     },
+        //     new UniqueEntityID(order.id),
+        // ).getValue();
     }
 
-    async findByCustomerId(customerId: string): Promise<OrderEntity[]> {
+    async findByCustomerId(customerId: string): Promise<OrderEntity[] | any> {
         // const orders = await this.repository.find({
         //     where: { customerId },
         //     relations: ['items'],
@@ -71,7 +70,7 @@ export class OrderRepository
         // );
     }
 
-    async findByStatus(status: OrderStatus): Promise<OrderEntity[]> {
+    async findByStatus(status: OrderStatus): Promise<OrderEntity[] | any> {
         // const orders = await this.repository.find({
         //     where: { status },
         //     relations: ['items'],
@@ -125,29 +124,9 @@ export class OrderRepository
     }
 
     async save(order: OrderEntity): Promise<void> {
-        // const orderData = this.repository.create({
-        //     id: order.id.toString(),
-        //     customerId: order.customerId,
-        //     status: order.status,
-        //     totalAmount: order.totalAmount,
-        //     shippingAddress: order.shippingAddress,
-        //     paymentMethod: order.paymentMethod,
-        //     createdAt: new Date(),
-        //     updatedAt: new Date(),
-        // });
-        //
-        // await this.repository.save(orderData);
-        //
-        // const orderItems = order.items.map((item) =>
-        //     this.orderItemRepository.create({
-        //         orderId: order.id.toString(),
-        //         productId: item.productId,
-        //         quantity: item.quantity,
-        //         price: item.price,
-        //     }),
-        // );
-        //
-        // await this.orderItemRepository.save(orderItems);
+        const ormEntity = this.toOrmEntity(order);
+        const orderData = this.repository.create(ormEntity);
+        await this.repository.save(orderData);
     }
 
     async update(order: OrderEntity): Promise<void> {
@@ -186,5 +165,15 @@ export class OrderRepository
         return Promise.resolve(undefined);
     }
 
-    toOrmEntity(domainEntity: OrderEntity): any {}
+    toOrmEntity(domainEntity: OrderEntity): any {
+        const order = new OrderOrmEntity();
+
+        return plainToClassFromExist(order, {
+            ...domainEntity.props,
+            id: domainEntity.id.toString(),
+            items: domainEntity.props.items.map((item) => {
+                return item.props;
+            }),
+        });
+    }
 }

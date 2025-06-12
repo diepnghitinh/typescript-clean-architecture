@@ -10,6 +10,8 @@ import { IUserRepository } from '@application/auth/repositories/user.repository'
 import { UserRepository } from '@infrastructure/auth/repositories/user.repository';
 import { IOrderRepository } from '@application/order/repositories/order.repository';
 import { OrderRepository } from '@infrastructure/order/repositories/order.repository';
+import { IProductRepository } from '@application/product/repositories/product.repository';
+import { ProductRepository } from '@infrastructure/product/repositories/product.repository';
 
 export const RepositoryProviders: Provider[] = [
     {
@@ -19,6 +21,10 @@ export const RepositoryProviders: Provider[] = [
     {
         provide: IOrderRepository,
         useClass: OrderRepository,
+    },
+    {
+        provide: IProductRepository,
+        useClass: ProductRepository,
     },
 ];
 
