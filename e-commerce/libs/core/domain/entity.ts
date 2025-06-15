@@ -1,14 +1,16 @@
 import { UniqueEntityID } from './unique-entity-id';
+import { AggregateRoot as NestAggregateRoot } from '@ocoda/event-sourcing'
 
 const isEntity = (v: any): v is Entity<any> => {
     return v instanceof Entity;
 };
 
-export abstract class Entity<T> {
+export abstract class Entity<T> extends NestAggregateRoot {
     protected readonly _id: UniqueEntityID;
     public readonly props: T;
 
     constructor(props: T, id?: UniqueEntityID) {
+        super();
         this._id = id ? id : new UniqueEntityID();
         this.props = props;
     }

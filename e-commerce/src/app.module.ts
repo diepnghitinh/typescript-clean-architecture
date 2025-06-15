@@ -1,9 +1,5 @@
-import { env } from 'process';
-import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import * as joi from 'joi';
-import { getEnvFilePath } from '@shared/utils';
 import { LoggerModule } from '@core/infrastructure/logger/logger.module';
 import { LoggingInterceptor } from '@core/presentation/interceptors/logging.interceptor';
 import { TransformInterceptor } from '@core/presentation/interceptors/transform.interceptor';
@@ -17,6 +13,7 @@ import { TypeOrmInfrastructureModule } from '@infrastructure/database/typeorm/ty
 import { PresentationModule } from '@presentation/presentation.module';
 import { MessagingInfrastructureModule } from '@infrastructure/messaging/messaging.module';
 import { CoreModule } from '@core/core.module';
+import { ApplicationModule } from '@application/application.module';
 
 @Module({
     imports: [
@@ -31,6 +28,8 @@ import { CoreModule } from '@core/core.module';
         // Messaging
         MessagingInfrastructureModule,
 
+        // DDD
+        ApplicationModule,
         PresentationModule,
     ],
     controllers: [HealthController],

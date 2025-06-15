@@ -1,9 +1,12 @@
 import { OrderProps, OrderStatus } from './order.props';
 import { AggregateRoot, UniqueEntityID } from '@core/domain';
+import { Aggregate, EventHandler } from '@ocoda/event-sourcing';
 import { Result } from '@shared/logic/result';
 import { OrderItemEntity } from '@application/order/domain/entities/order-item.entity';
 import { Guard } from '@shared/logic/guard';
+import { OrderCreatedEvent } from '@application/order/events/order-created.event';
 
+@Aggregate({ streamName: 'order' })
 export class OrderEntity extends AggregateRoot<OrderProps> {
     private constructor(props: OrderProps, id?: UniqueEntityID) {
         super(props, id);
@@ -44,6 +47,9 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
             // await order.addSagaEvent<OrderSubmitted>(
             //     ,
             // );
+            order.applyEvent(new OrderCreatedEvent(
+                order.id.toString(),
+            ))
         }
 
         return Result.ok<OrderEntity>(order);
@@ -110,5 +116,12 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
 
     public updateStatus(status: OrderStatus): void {
         this.props.status = status;
+    }
+
+    @EventHandler(OrderCreatedEvent)
+    handle(event: OrderCreatedEvent) {
+        // Business logic
+        console.log('handle')
+        console.log(event)
     }
 }

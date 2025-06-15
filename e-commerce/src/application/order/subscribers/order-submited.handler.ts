@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { OrderSubmitted } from '@shared/events/order';
 import { IPublishEndpoint } from 'nestjs-bustransit';
+import { OrderSubmitted } from '@shared/events/order.saga';
 
 @Injectable()
 export class OrderSubmittedHandler {
