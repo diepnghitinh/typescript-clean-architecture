@@ -10,6 +10,8 @@ import { OrderStatus } from '@application/order/domain/entities/order.props';
 import { OrderItemEntity } from '@application/order/domain/entities/order-item.entity';
 import { OrderFactory } from '@application/order/factories/order.factory';
 import { UniqueEntityID } from '@core/domain';
+import { IPublishEndpoint } from 'nestjs-bustransit';
+import { SagaMapper } from '@shared/events/saga.mapper';
 
 @Injectable()
 export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderEntity>> {
@@ -20,6 +22,8 @@ export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderE
         private readonly userRepository: IUserRepository,
         @Inject(IProductRepository)
         private readonly productRepository: IProductRepository,
+        @Inject(IPublishEndpoint)
+        private readonly publishEndpoint: IPublishEndpoint,
     ) {}
 
     async execute(userId: string, input: CreateOrderDTO): Promise<Result<OrderEntity>> {
@@ -59,13 +63,18 @@ export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderE
 
             await orderFactory.create(orderOrError.getValue());
 
-            // this.eventEmitter.emit(OrderSubmitted.constructor.name, new OrderSubmitted({
-            //     OrderId: '1',
-            //     Total: 2,
-            //     Email: 'hello world',
-            // }));
+            // Publish Domain Events to Event saga
+            orderOrError
+                .getValue()
+                .commit()
+                .forEach((event) => {
+                    if (SagaMapper[event.constructor.name])
+                        this.publishEndpoint.Publish( new SagaMapper[event.constructor.name](
+                            event
+                        ) );
+                });
 
-            return Result.ok<OrderEntity>(null);
+            return Result.ok<OrderEntity>(orderOrError.getValue());
         } catch (err) {
             return Result.fail<OrderEntity>(err);
         }

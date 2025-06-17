@@ -7,6 +7,7 @@ import { CreateOrderDTO } from '@application/order/dtos/create-order.dto';
 // Guards & Decorators
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { IJwtPayload } from '@application/auth/dtos/user.response.dto';
+import { OrderCreatedMapper } from '@application/order/mappers/order-created.mapper';
 
 // Command
 
@@ -17,6 +18,7 @@ export class OrderController {
     constructor(
         private readonly createOrderUseCase: CreateOrderUseCase,
         private readonly listOrdersUseCase: ListOrdersUseCase,
+        private readonly orderCreatedMapper: OrderCreatedMapper,
     ) {}
 
     @Post()
@@ -24,7 +26,7 @@ export class OrderController {
     @ApiResponse({ status: 201, description: 'Order created successfully' })
     @ApiResponse({ status: 400, description: 'Invalid input data' })
     async create(@CurrentUser() user: IJwtPayload, @Body() createOrderDto: CreateOrderDTO) {
-        return this.createOrderUseCase.execute(user.user_id, createOrderDto);
+        return this.orderCreatedMapper.toResponse((await this.createOrderUseCase.execute(user.user_id, createOrderDto)).getValue());
     }
 
     // @Public()

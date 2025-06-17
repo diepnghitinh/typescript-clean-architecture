@@ -1,5 +1,5 @@
 import { UniqueEntityID } from './unique-entity-id';
-import { AggregateRoot as NestAggregateRoot } from '@ocoda/event-sourcing'
+import { AggregateRoot as NestAggregateRoot } from '@ocoda/event-sourcing';
 
 const isEntity = (v: any): v is Entity<any> => {
     return v instanceof Entity;

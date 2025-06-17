@@ -43,13 +43,10 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
         const idWasProvided = !!id;
         // Dispatch to Domain Event
         if (!idWasProvided) {
-            // order.addDomainEvent(new OrderCreatedEvent());
-            // await order.addSagaEvent<OrderSubmitted>(
-            //     ,
-            // );
-            order.applyEvent(new OrderCreatedEvent(
-                order.id.toString(),
-            ))
+            order.applyEvent(new OrderCreatedEvent({
+                OrderId: order.id.toString(), 
+                Total: order.totalPrice,
+            }));
         }
 
         return Result.ok<OrderEntity>(order);
@@ -121,7 +118,7 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
     @EventHandler(OrderCreatedEvent)
     handle(event: OrderCreatedEvent) {
         // Business logic
-        console.log('handle')
-        console.log(event)
+        console.log('handle');
+        console.log(event);
     }
 }

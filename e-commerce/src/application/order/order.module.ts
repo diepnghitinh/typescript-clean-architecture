@@ -8,5 +8,6 @@ import { OrderCreatedEvent } from './events/order-created.event';
             events: [OrderCreatedEvent],
         }),
     ],
+    providers: [],
 })
 export class ApplicationOrderModule {}
