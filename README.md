@@ -13,7 +13,7 @@
 ### Proposed Aggregates & Entities:
 
 * **`Product` Aggregate:**
-    * **Aggregate Root:** `Product` Entity (ID sản phẩm, Tên, Mô tả, Giá cơ bản).
+    * **Aggregate Root:** `Product` Entity (Product ID, Name, Description, Base Price).
     * **Child Entities:**
         * `ProductVariant` (Variant ID, Size, Color, SKU, Specific price for variant, Stock quantity - Note: stock quantity can belong to the `Inventory` Context).
         * `ProductReview` (Review ID, Content, Star rating, User ID - Can be a child Entity or a separate Aggregate depending on the complexity of the review feature)..
