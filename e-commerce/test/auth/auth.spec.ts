@@ -7,7 +7,7 @@ import { GetUserUsecase } from '../../src/application/auth/use-cases/get-user.us
 import { UserAccountMapper } from '../../src/application/auth/mappers/user-account.mapper';
 import { AccessTokenMapper } from '../../src/application/auth/mappers/access-token.mapper';
 import { LoginDto } from '../../src/application/auth/dtos/login.dto';
-import { AuthenticationException } from '../../libs/shared/exceptions/domain-exceptions';
+import { AuthenticationException } from '@core/exceptions/domain-exceptions';
 
 describe('AuthController', () => {
     let controller: AuthController;
