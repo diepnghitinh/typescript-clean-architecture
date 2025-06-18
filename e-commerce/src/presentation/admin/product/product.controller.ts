@@ -11,7 +11,6 @@ import {
     HttpStatus,
     UseGuards,
 } from '@nestjs/common';
-import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 
 // Guards & Decorators

@@ -7,7 +7,7 @@ import { UniqueEntityID } from '@core/domain/unique-entity-id';
 import { UserEmail } from '@application/auth/domain/user-email';
 import { BaseRepository } from '@core/infrastructure/database/typeorm/base/repository.base';
 import { CustomerOrmEntity } from '@infrastructure/customer/entities/customer.orm.entity';
-import { LogExecution } from '@shared/decorators';
+import { LogExecution } from '@core/decorators';
 import { Result } from '@shared/logic/result';
 
 @Injectable()

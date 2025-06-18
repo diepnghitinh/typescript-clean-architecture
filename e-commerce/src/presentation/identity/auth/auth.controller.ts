@@ -1,8 +1,8 @@
 import { LoginDto } from '@application/auth/dtos/login.dto';
 import {BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards} from '@nestjs/common';
 import {ApiTags, ApiOperation, ApiResponse, ApiBearerAuth} from '@nestjs/swagger';
-import { Public } from '@shared/decorators';
-import { AuthenticationException } from '@shared/exceptions/domain-exceptions';
+import { Public } from '@core/decorators';
+import { AuthenticationException } from '@core/exceptions/domain-exceptions';
 import { UserAccountMapper } from '@application/auth/mappers/user-account.mapper';
 import { AccessTokenMapper } from '@application/auth/mappers/access-token.mapper';
 import { GetAuthTokenUsecase } from '@application/auth/use-cases/get-auth-token.usecase';

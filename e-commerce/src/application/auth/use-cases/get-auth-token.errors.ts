@@ -1,4 +1,4 @@
-import { UseCaseException } from '@shared/exceptions/use-case-exceptions';
+import { UseCaseException } from '@core/exceptions/use-case-exceptions';
 import { Result } from '@shared/logic/result';
 
 export namespace GetAuthTokenErrors {

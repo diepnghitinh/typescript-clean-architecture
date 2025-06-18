@@ -1,10 +1,12 @@
 import { OrderProps, OrderStatus } from './order.props';
 import { AggregateRoot, UniqueEntityID } from '@core/domain';
-import { Aggregate, EventHandler } from '@ocoda/event-sourcing';
 import { Result } from '@shared/logic/result';
 import { OrderItemEntity } from '@application/order/domain/entities/order-item.entity';
 import { Guard } from '@shared/logic/guard';
 import { OrderCreatedEvent } from '@application/order/events/order-created.event';
+import { OrderTestedEvent } from '@application/order/events/order-test.event';
+import { EventHandler } from '@core/decorators/event-handler.decorator';
+import { Aggregate } from '@core/decorators/aggregate.decorator';
 
 @Aggregate({ streamName: 'order' })
 export class OrderEntity extends AggregateRoot<OrderProps> {
@@ -47,6 +49,7 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
                 OrderId: order.id.toString(), 
                 Total: order.totalPrice,
             }));
+            order.applyEvent(new OrderTestedEvent(order.id.toString()))
         }
 
         return Result.ok<OrderEntity>(order);
@@ -116,7 +119,14 @@ export class OrderEntity extends AggregateRoot<OrderProps> {
     }
 
     @EventHandler(OrderCreatedEvent)
-    handle(event: OrderCreatedEvent) {
+    OrderCreatedEventHandle(event: OrderCreatedEvent) {
+        // Business logic
+        console.log('handle');
+        console.log(event);
+    }
+
+    @EventHandler(OrderTestedEvent)
+    OrderTestedEventHandle(event: OrderTestedEvent) {
         // Business logic
         console.log('handle');
         console.log(event);

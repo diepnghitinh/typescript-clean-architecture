@@ -14,6 +14,8 @@ import { PresentationModule } from '@presentation/presentation.module';
 import { MessagingInfrastructureModule } from '@infrastructure/messaging/messaging.module';
 import { CoreModule } from '@core/core.module';
 import { ApplicationModule } from '@application/application.module';
+import { EventStoreInfrastructureModule } from '@infrastructure/eventstore/eventstore.module';
+import { CreateOrderUseCase } from '@application/order/use-cases/create-order.use-case';
 
 @Module({
     imports: [
@@ -27,6 +29,9 @@ import { ApplicationModule } from '@application/application.module';
 
         // Messaging
         MessagingInfrastructureModule,
+
+        // EventStore
+        EventStoreInfrastructureModule,
 
         // DDD
         ApplicationModule,

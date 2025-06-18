@@ -3,7 +3,7 @@ import { Result } from '@shared/logic/result';
 import { OrderEntity } from '../domain/entities/order.entity';
 import { IOrderRepository } from '../repositories/order.repository';
 import { CreateOrderDTO } from '../dtos/create-order.dto';
-import { IUsecaseExecute } from '@shared/interfaces/application.interface';
+import { ICommand, IUsecaseExecute } from '@core/interfaces/application.interface';
 import { IUserRepository } from '@application/auth/repositories/user.repository';
 import { IProductRepository } from '@application/product/repositories/product.repository';
 import { OrderStatus } from '@application/order/domain/entities/order.props';
@@ -13,8 +13,12 @@ import { UniqueEntityID } from '@core/domain';
 import { IPublishEndpoint } from 'nestjs-bustransit';
 import { SagaMapper } from '@shared/events/saga.mapper';
 
+export class CreateOrderUseCaseCommand implements ICommand {
+	constructor(public readonly userId: string, public readonly input: CreateOrderDTO) {}
+}
+
 @Injectable()
-export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderEntity>> {
+export class CreateOrderUseCase implements IUsecaseExecute<CreateOrderUseCaseCommand, Result<OrderEntity>> {
     constructor(
         @Inject(IOrderRepository)
         private readonly orderRepository: IOrderRepository,
@@ -26,17 +30,17 @@ export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderE
         private readonly publishEndpoint: IPublishEndpoint,
     ) {}
 
-    async execute(userId: string, input: CreateOrderDTO): Promise<Result<OrderEntity>> {
-        if (!input.items.length) {
+    async execute( command: CreateOrderUseCaseCommand ): Promise<Result<OrderEntity>> {
+        if (!command.input.items.length) {
             throw new Error('Order must have at least one item');
         }
 
         try {
             const orderFactory = new OrderFactory(this.orderRepository, this.productRepository);
 
-            const customerOrError = await this.getCustomer(userId);
+            const customerOrError = await this.getCustomer(command.userId);
             const [productsOrError, totalPrice] = (
-                await this.getProductsAndTotalPrice(input)
+                await this.getProductsAndTotalPrice(command.input)
             ).getValue();
 
             const orderOrError = await OrderEntity.create({
@@ -44,13 +48,13 @@ export class CreateOrderUseCase implements IUsecaseExecute<string, Result<OrderE
                 customerId: customerOrError.getValue(),
                 status: OrderStatus.PENDING,
                 totalPrice: totalPrice,
-                shippingAddress: input.shippingAddress,
-                paymentMethod: input.paymentMethod,
+                shippingAddress: command.input.shippingAddress,
+                paymentMethod: command.input.paymentMethod,
                 items: [],
             });
 
             // Add items to calculate total amount
-            input.items.forEach((item) =>
+            command.input.items.forEach((item) =>
                 orderOrError.getValue().addItem(
                     OrderItemEntity.create({
                         orderId: orderOrError.getValue().id.toString(),

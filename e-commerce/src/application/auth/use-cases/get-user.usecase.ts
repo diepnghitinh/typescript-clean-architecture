@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { IUsecaseQuery } from '@shared/interfaces/application.interface';
-import { LogExecution } from '@shared/decorators';
+import { IUsecaseQuery } from '@core/interfaces/application.interface';
+import { LogExecution } from '@core/decorators';
 import { Result } from '@shared/logic/result';
 import { IUserRepository } from '../repositories/user.repository';
 import { UserAccountEntity } from '../domain/user-account.entity';

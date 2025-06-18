@@ -2,6 +2,10 @@ export interface InputDto {}
 
 export interface OutputDto {}
 
+export type ICommand = any;
+
+export type IEvent = {};
+
 export interface IUsecaseQuery<
     Input,
     Output extends OutputDto,

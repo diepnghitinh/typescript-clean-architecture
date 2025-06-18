@@ -1,4 +1,5 @@
-import { Event, type IEvent } from '@ocoda/event-sourcing';
+import { IEvent } from "@core/interfaces";
+import { Event } from '@core/decorators/event.decorator'
 
 @Event('order-created')
 export class OrderCreatedEvent implements IEvent {
