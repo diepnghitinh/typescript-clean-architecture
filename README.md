@@ -1,5 +1,8 @@
 # E-Commerce & Clean Architecture
 
+# Diagram architecture
+![CoreDomain](./docs/images/ddd-diagram.png)
+
 # Core Domain & Sub-Domain
 ![CoreDomain](./docs/images/core-domain.png)
 
