@@ -7,165 +7,112 @@
 
 ## 1. Product Catalog Subdomain / Product Catalog Website
 
-* **Loại Subdomain:** `Core`
-* **Mô tả:** Chịu trách nhiệm quản lý thông tin sản phẩm, danh mục, và hiển thị trên website. Đây là nơi xác định các thuộc tính, biến thể và cấu trúc của sản phẩm.
+* **Subdomain Type:** `Core`
+* **Description:** Responsible for managing product information, categories, and displaying them on the website. This is where product attributes, variants, and structure are defined.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`Product` Aggregate:**
     * **Aggregate Root:** `Product` Entity (ID sản phẩm, Tên, Mô tả, Giá cơ bản).
-    * **Entities con:**
-        * `ProductVariant` (ID biến thể, Kích thước, Màu sắc, SKU, Giá cụ thể cho biến thể, Số lượng tồn kho - *Lưu ý: số lượng tồn kho có thể thuộc về `Inventory` Context*).
-        * `ProductReview` (ID đánh giá, Nội dung, Đánh giá sao, ID người dùng - *Có thể là Entity con hoặc Aggregate riêng tùy độ phức tạp của tính năng đánh giá*).
+    * **Child Entities:**
+        * `ProductVariant` (Variant ID, Size, Color, SKU, Specific price for variant, Stock quantity - Note: stock quantity can belong to the `Inventory` Context).
+        * `ProductReview` (Review ID, Content, Star rating, User ID - Can be a child Entity or a separate Aggregate depending on the complexity of the review feature)..
     * **Value Objects:** `Money`, `ImageURL`, `Dimension`, `Specification`.
-    * **Quy tắc bất biến (Invariants):**
-        * Giá của một `ProductVariant` không thể thấp hơn giá cơ bản của `Product` (nếu có logic này).
-        * Một `Product` phải có ít nhất một `ProductVariant` đang hoạt động (nếu áp dụng).
+    * **Invariants:**
+        * The price of a `ProductVariant` cannot be lower than the base price of the `Product` (if this logic applies).
+        * A `Product` must have at least one active ProductVariant (if applicable).
 
 
 ## 2. Orders Subdomain / Orders Application
 
-* **Loại Subdomain:** `Support`
-* **Mô tả:** Quản lý việc tạo, theo dõi và xử lý trạng thái cốt lõi của đơn hàng.
+* **Subdomain Type:** `Support`
+* **Description:** Manages the creation, tracking, and core status processing of orders.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`Order` Aggregate:**
-    * **Aggregate Root:** `Order` Entity (ID đơn hàng, ID khách hàng, Ngày đặt, Trạng thái, Tổng số tiền).
-    * **Entities con:**
-        * `OrderItem` (ID mục hàng, ID sản phẩm, Số lượng, Giá tại thời điểm đặt hàng).
-    * **Value Objects:** `ShippingAddress`, `BillingAddress`, `PaymentInfoSnapshot` (chỉ là bản sao thông tin thanh toán tại thời điểm đặt hàng, không phải chi tiết thanh toán thực tế).
-    * **Quy tắc bất biến (Invariants):**
-        * Tổng số tiền của đơn hàng phải luôn bằng tổng số tiền của tất cả các `OrderItem`.
-        * Trạng thái của đơn hàng phải tuân theo một chu trình cụ thể và không thể chuyển trạng thái lùi (ví dụ: `Pending` -> `Confirmed` -> `Shipped` -> `Delivered`).
+    * **Aggregate Root:** `Order` Entity (Order ID, Customer ID, Order Date, Status, Total Amount).
+    * **Child Entities:**
+        * `OrderItem` (Item ID, Product ID, Quantity, Price at the time of order).
+    * **Value Objects:** `ShippingAddress`, `BillingAddress`, `PaymentInfoSnapshot` (only a copy of payment information at the time of order, not actual payment details).
+    * **Invariants:**
+        * The total amount of the order must always equal the sum of all `OrderItem` amounts.
+        * The order status must follow a specific lifecycle and cannot transition backward (e.g., `Pending` -> `Confirmed` -> `Shipped` -> `Delivered`).
 
 ## 3. Payment Subdomain / Payment Application
 
-* **Loại Subdomain:** `Generic`
-* **Mô tả:** Xử lý các giao dịch thanh toán thực tế thông qua các cổng thanh toán.
+* **Subdomain Type:** `Generic`
+* **Description:** Handles actual payment transactions through payment gateways.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`PaymentTransaction` Aggregate:**
-    * **Aggregate Root:** `PaymentTransaction` Entity (ID giao dịch, ID đơn hàng/hóa đơn liên quan, Số tiền, Trạng thái giao dịch, Phương thức thanh toán, Thời gian).
-    * **Value Objects:** `CreditCardDetails` (đã mã hóa/tokenized), `PaymentMethodInfo` (ví dụ: loại thẻ, tên ngân hàng), `BillingDetails`.
-    * **Quy tắc bất biến (Invariants):**
-        * Giao dịch chỉ có thể chuyển từ trạng thái `Pending` sang `Completed` hoặc `Failed`.
-        * Số tiền giao dịch thực tế phải khớp với số tiền được yêu cầu.
+    * **Aggregate Root:** `PaymentTransaction` Entity (Transaction ID, Related Order/Invoice ID, Amount, Transaction Status, Payment Method, Timestamp).
+    * **Value Objects:** `CreditCardDetails` encrypted/tokenized), `PaymentMethodInfo` (e.g., card type, bank name), `BillingDetails`.
+    * **Invariants:**
+        * A transaction can only transition from `Pending` to `Completed` or `Failed`..
+        * The actual transaction amount must match the requested amount.
 
 
 ## 4. Shipping Subdomain / Shipping Application
 
-* **Loại Subdomain:** `Support`
-* **Mô tả:** Quản lý quy trình vận chuyển và giao nhận hàng hóa.
+* **Subdomain Type:** `Support`
+* **Description:** Manages the shipping and delivery process for goods.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`Shipment` Aggregate:**
-    * **Aggregate Root:** `Shipment` Entity (ID vận chuyển, ID đơn hàng liên quan, Mã nhà vận chuyển, Số theo dõi, Trạng thái vận chuyển).
+    * **Aggregate Root:** `Shipment` Entity (Shipment ID, Related Order ID, Carrier Code, Tracking Number, Shipment Status).
     * **Entities con:**
-        * `ShipmentItem` (ID mục vận chuyển, ID sản phẩm, Số lượng sản phẩm trong gói hàng này).
+        * `ShipmentItem` (Shipment Item ID, Product ID, Quantity of product in this package).
     * **Value Objects:** `DeliveryAddress`, `EstimatedDeliveryDate`, `TrackingHistory`.
-    * **Quy tắc bất biến (Invariants):**
-        * Các mặt hàng trong `Shipment` phải khớp với các mặt hàng của `Order` mà nó phục vụ.
-        * Trạng thái vận chuyển phải tuân theo trình tự logic (ví dụ: `Processing` -> `Picked Up` -> `In Transit` -> `Delivered`).
-
+    * **Invariants:**
+        * Items in a `Shipment` must match the items of the Order it serves.
+        * Shipping status must follow a logical sequence (e.g., `Processing` -> `Picked Up` -> `In Transit` -> `Delivered`).
 
 ## 5. Inventory Subdomain / Inventory Application Bounded Context
 
-* **Loại Subdomain:** `Generic`
-* **Mô tả:** Quản lý số lượng tồn kho vật lý của các sản phẩm.
+* **Subdomain Type:** `Generic`
+* **Description:** Manages the physical stock quantity of products.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`InventoryItem` Aggregate:**
-    * **Aggregate Root:** `InventoryItem` Entity (ID sản phẩm, Số lượng tồn kho hiện tại, Số lượng tồn kho đã đặt trước).
-    * **Value Objects:** `Location` (nếu có nhiều kho hàng), `ReorderLevel` (mức tồn kho để đặt hàng lại).
+    * **Aggregate Root:** `InventoryItem` Entity (Product ID, Current Stock quantity, Reserved Stock quantity).
+    * **Value Objects:** `Location` (if multiple warehouses), `ReorderLevel` (stock level for reordering).
     * **Invariants:**
-        * `Current Stock` (tồn kho hiện tại) không bao giờ được âm.
-        * `Reserved Stock` (tồn kho đã đặt trước) không thể lớn hơn `Current Stock`.
+        * `Current Stock` should never be negative.
+        * `Reserved Stock` cannot be greater than `Current Stock`.
 
 ## 6. Authorization, Authentication Subdomain / Access Control Application
 
-* **Loại Subdomain:** `Generic`
-* **Mô tả:** Cung cấp các dịch vụ xác thực và ủy quyền người dùng.
+* **Subdomain Type** `Generic`
+* **Description:** Provides user authentication and authorization services.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`UserAccount` Aggregate:**
-    * **Aggregate Root:** `UserAccount` Entity (ID người dùng, Tên đăng nhập, Mật khẩu đã mã hóa, Email, Trạng thái tài khoản).
+    * **Aggregate Root:** `UserAccount` Entity (User ID, Username, Hashed Password, Email, Account Status).
     * **Entities con:**
-        * `Role` (ID vai trò, Tên vai trò, Quyền hạn - *Nếu `Role` có vòng đời và ID riêng*).
-        * `Permission` (ID quyền, Tên quyền - *Nếu `Permission` được quản lý độc lập*).
+        * `Role` (Role ID, Role Name, Permissions - *If `Role` has its own lifecycle and ID*).
+        * `Permission`  (Permission ID, Permission Name - *If `Permission` is managed independently*).
     * **Value Objects:** `PasswordHash`, `EmailAddress`, `AuthenticationToken`.
     * **Invariants:**
-        * Tên đăng nhập hoặc Email phải là duy nhất trong hệ thống.
-        * Mật khẩu phải đáp ứng các yêu cầu về độ phức tạp.
+        * Username or Email must be unique in the system.
+        * Password must meet complexity requirements.
 
 ## 7. Customer Management Subdomain / Customer Management Application
 
-* **Loại Subdomain:** `Support`
-* **Mô tả:** Quản lý thông tin chi tiết cá nhân và lịch sử tương tác của khách hàng.
+* **Subdomain Type:** `Support`
+* **Description:** Manages customer personal details and interaction history.
 
-### Đề xuất Aggregate & Entities:
+### Proposed Aggregates & Entities:
 
 * **`Customer` Aggregate:**
-    * **Aggregate Root:** `Customer` Entity (ID khách hàng, Tên, Thông tin liên hệ chính).
+    * **Aggregate Root:** `Customer` Entity (Customer ID, Name, Primary Contact Information).
     * **Entities con:**
-        * `CustomerPreference` (ID tùy chọn, Loại tùy chọn, Giá trị - ví dụ: tùy chọn nhận email quảng cáo).
-        * `LoyaltyPoints` (ID điểm thưởng, Số điểm, Cấp độ - *Nếu quản lý trong Context này*).
-    * **Value Objects:** `PhoneNumber`, `EmailAddress`, `BillingAddress`, `ShippingAddress` (nếu địa chỉ không cần ID riêng và chỉ gắn liền với `Customer`).
+        * `CustomerPreference` (Preference ID, Preference Type, Value - e.g., email marketing preference).
+    * **Value Objects:** `PhoneNumber`, `EmailAddress`, `BillingAddress`, `ShippingAddress` (if addresses do not require separate IDs and are only tied to `Customer`).
     * **Invariants:**
-        * Email chính của khách hàng phải là duy nhất.
-        * Địa chỉ giao hàng mặc định phải là một trong các địa chỉ đã lưu của khách hàng.
-
-# Context Mapping
-
-```mermaid
-graph TD
-    subgraph Legend
-        direction LR
-        S[Supplier] --> C[Customer]
-        P[Publisher] --> L[Listener]
-        A[Context A] -- Partnership --> B[Context B]
-        X[Context X] -- ACL --> Y[Context Y]
-        SK[Shared Kernel]
-    end
-
-    subgraph E-Commerce Domain
-        PC[Product Catalog]
-        ORD[Orders]
-        PAY[Payment]
-        SHIP[Shipping]
-        INV[Inventory]
-        AUTH[Authorization, Authentication]
-        CUST[Customer Management]
-
-        PC -- Open Host Service / Published Language --> ORD
-        ORD -- Published Language (OrderConfirmedEvent) --> INV
-        ORD -- Published Language (PaymentRequestedEvent) --> PAY
-        PAY -- Published Language (PaymentSuccessfulEvent) --> ORD
-        PAY -- Published Language (PaymentSuccessfulEvent) --> SHIP
-        ORD -- Published Language (OrderReadyForShipmentEvent) --> SHIP
-
-        AUTH -- Shared Kernel / Open Host Service (User ID) --> ORD
-        AUTH -- Shared Kernel / Open Host Service (User ID) --> CUST
-        AUTH -- Shared Kernel / Open Host Service (User ID) --> PC
-
-        CUST -- Published Language (CustomerUpdatedEvent) --> ORD
-        CUST -- Published Language (CustomerUpdatedEvent) --> PAY
-        ORD -- Conformist (Customer Info) --> CUST
-    end
-```
-
-# Resources
-- https://github.com/Sairyss/domain-driven-hexagon
-- https://github.com/v-checha/nestjs-template
-- https://github.com/zhuravlevma/ddd-nested-aggregates
-- https://github.com/zhuravlevma/typescript-ddd-architecture
-- https://github.com/SAP/curated-resources-for-domain-driven-design/tree/main/blog
-- https://medium.com/building-inventa/how-we-used-event-storming-meetings-for-enabling-software-domain-driven-design-401e5d708eb
-- https://medium.com/@lambrych/domain-driven-design-ddd-strategic-design-explained-55e10b7ecc0f
-- https://medium.com/augury-research-and-development/practical-ddd-part-2-architectural-topics-1-aggregate-and-bounded-context-microservice-ecb180298207
-- https://dev.to/ruben_alapont/domain-events-and-event-sourcing-in-domain-driven-design-l0n
-- https://mehmetozkaya.medium.com/domain-events-in-ddd-and-domain-vs-integration-events-in-microservices-architecture-c8d92787de86
+        * The customer's primary email must be unique.
+        * The default shipping address must be one of the customer's saved addresses.
