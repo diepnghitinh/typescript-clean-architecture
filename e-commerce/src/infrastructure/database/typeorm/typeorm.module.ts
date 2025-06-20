@@ -12,6 +12,8 @@ import { IOrderRepository } from '@application/order/repositories/order.reposito
 import { OrderRepository } from '@infrastructure/order/repositories/order.repository';
 import { IProductRepository } from '@application/product/repositories/product.repository';
 import { ProductRepository } from '@infrastructure/product/repositories/product.repository';
+import { IEventStoreRepository } from '@infrastructure/eventstore/repositories/event-store.responsity.interface';
+import { EventStoreRepository } from '@infrastructure/eventstore/repositories/event-store.repository';
 
 export const RepositoryProviders: Provider[] = [
     {
@@ -26,6 +28,12 @@ export const RepositoryProviders: Provider[] = [
         provide: IProductRepository,
         useClass: ProductRepository,
     },
+
+    // Event souring
+    {
+        provide: IEventStoreRepository,
+        useClass: EventStoreRepository,
+    }
 ];
 
 @Global()

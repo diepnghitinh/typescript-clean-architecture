@@ -47,4 +47,8 @@ export abstract class AggregateRoot<T> extends Entity<T> {
 
 		return events;
 	}
+
+	getUncommittedEvents(): IEvent[] {
+		return [...this[EVENTS]];
+	}
 }

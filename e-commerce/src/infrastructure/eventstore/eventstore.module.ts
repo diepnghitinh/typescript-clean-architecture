@@ -1,13 +1,13 @@
-
-import { OrderCreatedEvent } from '@application/order/events/order-created.event';
-import { OrderTestedEvent } from '@application/order/events/order-test.event';
-import {Global, Logger, Module, Provider} from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventStoreOrmEntity } from './entities/event-store.orm.entity';
+import { EventStoreRepository } from './repositories/event-store.repository';
+import { EventStoreService } from './eventstore.service';
 
 @Global()
 @Module({
-    imports: [
-    ],
-    providers: [
-    ],
+    imports: [],
+    providers: [EventStoreService],
+    exports: [EventStoreService],
 })
 export class EventStoreInfrastructureModule {}

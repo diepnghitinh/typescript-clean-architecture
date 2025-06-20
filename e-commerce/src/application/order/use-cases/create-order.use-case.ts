@@ -9,6 +9,7 @@ import { IProductRepository } from '@application/product/repositories/product.re
 import { OrderStatus } from '@application/order/domain/entities/order.props';
 import { OrderItemEntity } from '@application/order/domain/entities/order-item.entity';
 import { OrderFactory } from '@application/order/factories/order.factory';
+import { IEventStoreRepository } from '@infrastructure/eventstore/repositories/event-store.responsity.interface';
 import { UniqueEntityID } from '@core/domain';
 import { IPublishEndpoint } from 'nestjs-bustransit';
 import { SagaMapper } from '@shared/events/saga.mapper';
@@ -28,6 +29,7 @@ export class CreateOrderUseCase implements IUsecaseExecute<CreateOrderUseCaseCom
         private readonly productRepository: IProductRepository,
         @Inject(IPublishEndpoint)
         private readonly publishEndpoint: IPublishEndpoint,
+        private readonly eventStoreService: IEventStoreRepository,
     ) {}
 
     async execute( command: CreateOrderUseCaseCommand ): Promise<Result<OrderEntity>> {
@@ -68,15 +70,24 @@ export class CreateOrderUseCase implements IUsecaseExecute<CreateOrderUseCaseCom
             await orderFactory.create(orderOrError.getValue());
 
             // Publish Domain Events to Event saga
-            orderOrError
-                .getValue()
-                .commit()
-                .forEach((event) => {
-                    if (SagaMapper[event.constructor.name])
-                        this.publishEndpoint.Publish( new SagaMapper[event.constructor.name](
-                            event
-                        ) );
-                });
+            const events = orderOrError.getValue().commit();
+            events.forEach((event) => {
+                if (SagaMapper[event.constructor.name])
+                    this.publishEndpoint.Publish( new SagaMapper[event.constructor.name](event) );
+            });
+
+            // Bulk save events to event store
+            const aggregateId = orderOrError.getValue().id.toString();
+            const aggregateType = 'Order';
+            let version = 1;
+            const eventEntities = events.map((event) => ({
+                aggregate_id: aggregateId,
+                aggregate_type: aggregateType,
+                event_type: event.constructor.name,
+                event_data: event,
+                version: version++,
+            }));
+            await this.eventStoreService.saveEvents(eventEntities);
 
             return Result.ok<OrderEntity>(orderOrError.getValue());
         } catch (err) {
