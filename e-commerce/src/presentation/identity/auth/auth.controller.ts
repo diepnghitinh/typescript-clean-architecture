@@ -1,5 +1,5 @@
 import { LoginDto } from '@application/auth/dtos/login.dto';
-import {BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards, Req, Res} from '@nestjs/common';
 import {ApiTags, ApiOperation, ApiResponse, ApiBearerAuth} from '@nestjs/swagger';
 import { Public } from '@core/decorators';
 import { AuthenticationException } from '@core/exceptions/domain-exceptions';
@@ -7,6 +7,8 @@ import { UserAccountMapper } from '@application/auth/mappers/user-account.mapper
 import { AccessTokenMapper } from '@application/auth/mappers/access-token.mapper';
 import { GetAuthTokenUsecase } from '@application/auth/use-cases/get-auth-token.usecase';
 import { GetUserUsecase } from '@application/auth/use-cases/get-user.usecase';
+import { AuthGuard } from '@nestjs/passport';
+import { Response, Request } from 'express';
 
 @ApiTags('Auth')
 @Controller()
@@ -49,5 +51,21 @@ export class AuthController {
         } catch (e) {
             throw new BadRequestException(e.message);
         }
+    }
+
+    @Public()
+    @Get('linkedin')
+    @UseGuards(AuthGuard('linkedin'))
+    async linkedinLogin() {
+        // Guard redirects to LinkedIn
+    }
+
+    @Public()
+    @Get('linkedin/callback')
+    @UseGuards(AuthGuard('linkedin'))
+    async linkedinCallback(@Req() req: Request, @Res() res: Response) {
+        // Here you can handle the user info from LinkedIn
+        // For demo, just return the profile
+        return res.json(req.user);
     }
 }
